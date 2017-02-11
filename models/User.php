@@ -2,38 +2,65 @@
 
 namespace app\models;
 
-class User extends \yii\base\Object implements \yii\web\IdentityInterface
+use Yii;
+
+/**
+ * This is the model class for table "user".
+ *
+ * @property integer $id
+ * @property string $phone
+ * @property string $name
+ * @property integer $hospital_id
+ * @property string $open_id
+ */
+class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
-    public $id;
     public $username;
     public $password;
     public $authKey;
     public $accessToken;
 
-    private static $users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            'password' => 'demo',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return 'user';
+    }
 
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['hospital_id'], 'integer'],
+            [['phone'], 'string', 'max' => 20],
+            [['name'], 'string', 'max' => 100],
+            [['open_id'], 'string', 'max' => 50],
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'phone' => 'Phone',
+            'name' => 'Name',
+            'hospital_id' => 'Hospital ID',
+            'open_id' => 'Open ID',
+        ];
+    }
 
     /**
      * @inheritdoc
      */
     public static function findIdentity($id)
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        return static::findOne($id);
     }
 
     /**
@@ -41,10 +68,8 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
+        if ($uid = Yii::$app->redis->get('user_token:' . $token)) {
+            return static::findIdentity($uid);
         }
 
         return null;
@@ -58,13 +83,7 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
      */
     public static function findByUsername($username)
     {
-        foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return static::findOne(['name' => $username]);
     }
 
     /**
@@ -100,5 +119,25 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
     public function validatePassword($password)
     {
         return $this->password === $password;
+    }
+
+    public static function loginByWeixin($openId)
+    {
+        if (!$user = static::findOne(['open_id' => $openId])) {
+            return 0;
+        }
+        if (empty($user->phone)) {
+            return 0;
+        }
+        return self::setToken($user->id);
+    }
+
+    public static function setToken($user_id)
+    {
+        $token = md5(time() . $user_id . rand(100, 999));
+
+        Yii::$app->redis->setex('user_token:' . $token, 86400 * 30, $user_id);
+
+        return $token;
     }
 }

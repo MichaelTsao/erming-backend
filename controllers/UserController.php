@@ -2,51 +2,37 @@
 
 namespace app\controllers;
 
+use app\models\User;
 use Yii;
+use mycompany\common\WeiXin;
+use yii\web\ForbiddenHttpException;
 
 class UserController extends \yii\rest\Controller
 {
-    public function actionWxLogin($code)
+    public function actionLoginWx($code)
     {
-        $appId = Yii::$app->params['weixin_app_id'];
-        $secret = 'f5214b4c4e803229d524b844b640cd26';
+        $weixin = new WeiXin([
+            'appId' => Yii::$app->params['weixin_appid'],
+            'appSecret' => Yii::$app->params['weixin_secret'],
+        ]);
 
-        $r = Logic::request("https://api.weixin.qq.com/sns/jscode2session?appid=$appId&secret=$secret&js_code=$code&grant_type=authorization_code");
-        if (!$r) {
-            throw new ApiException(ApiException::LOGIN_FAIL);
+        if (!$weixinInfo = $weixin->codeToSession($code)) {
+            throw new ForbiddenHttpException();
         }
 
-        $result = json_decode($r, true);
-        if (!isset($result['openid'])) {
-            throw new ApiException(ApiException::LOGIN_FAIL);
+        if (!$token = User::loginByWeixin($weixinInfo['openid'])) {
+            return -1;
         }
 
-        $openId = $result['openid'];
-        $session = $result['session_key'];
+        return $token;
+    }
 
-        if (!$wxUser = WxUser::model()->findByPk($openId)) {
-            $user = new UserDB();
-            $user->status = 1;
-            $user->save();
-
-            $wxUser = new WxUser();
-            $wxUser->openid = $openId;
-            $wxUser->session_key = $session;
-            $wxUser->uid = $user->uid;
-            $wxUser->save();
-        } else {
-            $wxUser->session_key = $session;
-            $wxUser->save();
+    public function acitonLogin($token)
+    {
+        if ($user = User::findIdentityByAccessToken($token)){
+            return $user->id;
         }
-
-        $token = User::makeToken($openId);
-
-        $token_info = new UserToken();
-        $token_info->uid = $wxUser->uid;
-        $token_info->token = $token;
-        $token_info->save();
-
-        Logic::makeResult($token);
+        return 0;
     }
 
     public function actionRegister()
