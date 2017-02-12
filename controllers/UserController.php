@@ -37,7 +37,20 @@ class UserController extends \yii\rest\Controller
 
     public function actionRegister()
     {
-        return $this->render('register');
+        $user = new User();
+        $user->phone = Yii::$app->request->post('phone');
+        $user->phoneCode = Yii::$app->request->post('phoneCode');
+        $user->password = Yii::$app->request->post('password');
+        $user->name = Yii::$app->request->post('name');
+        $user->hospital_id = Yii::$app->request->post('hospital_id');
+
+        $passwordAgain = Yii::$app->request->post('passwordAgain');
+
+        if (!$user->save()) {
+            return -1;
+        }
+
+        return $token;
     }
 
 }

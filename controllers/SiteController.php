@@ -8,6 +8,8 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\SmsCode;
+use app\models\base\Common;
 
 class SiteController extends Controller
 {
@@ -121,5 +123,26 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    public function actionSendCode($phone)
+    {
+        if (isset(Yii::$app->user->id)) {
+            $uid = Yii::$app->user->id;
+        } else {
+            $uid = 0;
+        }
+        $sms_code_config = [
+            'uid' => $uid,
+            'phone' => Yii::$app->request->get('phone', ''),
+            'type' => Yii::$app->request->get('type', SmsCode::TYPE_REGISTER),
+            'scenario' => SmsCode::SCENARIO_SEND,
+        ];
+        $sms_code = new SmsCode($sms_code_config);
+        if (!$sms_code->send()) {
+            return Common::getFirstError($sms_code);
+        } else {
+            return 'ok';
+        }
     }
 }
