@@ -78,6 +78,11 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         return null;
     }
 
+    public static function findByPhone($phone)
+    {
+        return static::findOne(['phone' => $phone]);
+    }
+
     /**
      * Finds user by username
      *
