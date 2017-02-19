@@ -11,6 +11,6 @@ class HospitalController extends \yii\rest\Controller
 {
     public function actionList()
     {
-        return Hospital::find()->select('name')->column();
+        return Hospital::find()->select(['name', 'id'])->indexBy('id')->column();
     }
 }

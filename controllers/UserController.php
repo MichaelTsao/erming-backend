@@ -2,10 +2,12 @@
 
 namespace app\controllers;
 
+use app\models\base\Common;
 use app\models\User;
 use Yii;
 use mycompany\common\WeiXin;
 use yii\web\ForbiddenHttpException;
+use app\models\SmsCode;
 
 class UserController extends \yii\rest\Controller
 {
@@ -37,9 +39,19 @@ class UserController extends \yii\rest\Controller
 
     public function actionRegister()
     {
+        $sms_code_config = [
+            'phone' => Yii::$app->request->post('phone', ''),
+            'code' => Yii::$app->request->post('code', ''),
+            'type' => SmsCode::TYPE_REGISTER,
+            'scenario' => SmsCode::SCENARIO_CHECK,
+        ];
+        $sms_code = new SmsCode($sms_code_config);
+        if (!$sms_code->check()) {
+            return [1, Common::getFirstError($sms_code)];
+        }
+
         $user = new User();
         $user->phone = Yii::$app->request->post('phone');
-        $user->phoneCode = Yii::$app->request->post('phoneCode');
         $user->password = Yii::$app->request->post('password');
         $user->name = Yii::$app->request->post('name');
         $user->hospital_id = Yii::$app->request->post('hospital_id');
@@ -50,7 +62,7 @@ class UserController extends \yii\rest\Controller
             return -1;
         }
 
-        return $token;
+        return [0, $token];
     }
 
 }
