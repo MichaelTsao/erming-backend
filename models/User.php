@@ -137,7 +137,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
         if (empty($user->phone)) {
             return 0;
         }
-        return self::setToken($user->id);
+        return $user->id;
     }
 
     public static function setToken($user_id)

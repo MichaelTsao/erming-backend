@@ -22,11 +22,11 @@ class UserController extends \yii\rest\Controller
             throw new ForbiddenHttpException();
         }
 
-        if (!$token = User::loginByWeixin($weixinInfo['openid'])) {
-            return -1;
+        if (!$uid = User::loginByWeixin($weixinInfo['openid'])) {
+            throw new ForbiddenHttpException();
         }
 
-        return $token;
+        return [$uid, User::setToken($uid)];
     }
 
     public function acitonLogin($token)
@@ -56,10 +56,12 @@ class UserController extends \yii\rest\Controller
         $user->name = Yii::$app->request->post('name');
         $user->hospital_id = Yii::$app->request->post('hospital_id');
 
-        $passwordAgain = Yii::$app->request->post('passwordAgain');
-
         if (!$user->save()) {
-            return -1;
+            return [2, "系统错误"];
+        }
+
+        if (!$token = User::setToken($user->id)) {
+            return [2, "系统错误"];
         }
 
         return [0, $token];

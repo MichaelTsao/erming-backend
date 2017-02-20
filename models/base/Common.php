@@ -64,7 +64,8 @@ class Common
 
     public static function getFirstError($object)
     {
-        return array_values($object->firstErrors)[0];
+        $values = array_values($object->firstErrors);
+        return isset($values[0]) ? $values[0] : '';
     }
 
     static public function uploadImage($type, $uid)
