@@ -37,7 +37,7 @@ class Hospital extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => '名字',
         ];
     }
 }

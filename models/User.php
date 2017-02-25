@@ -10,18 +10,15 @@ use Yii;
  * @property integer $id
  * @property string $phone
  * @property string $name
+ * @property string $password
  * @property integer $hospital_id
  * @property string $open_id
  */
 class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
     public $username;
-    public $password;
     public $authKey;
     public $accessToken;
-
-    public $phoneCode;
-    public $passwordAgain;
 
     /**
      * @inheritdoc
@@ -40,6 +37,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             [['hospital_id'], 'integer'],
             [['phone'], 'string', 'max' => 20],
             [['name'], 'string', 'max' => 100],
+            [['password'], 'string', 'max' => 50],
             [['open_id'], 'string', 'max' => 50],
         ];
     }
@@ -53,6 +51,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'id' => 'ID',
             'phone' => 'Phone',
             'name' => 'Name',
+            'password' => 'password',
             'hospital_id' => 'Hospital ID',
             'open_id' => 'Open ID',
         ];

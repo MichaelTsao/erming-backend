@@ -40,12 +40,12 @@ AppAsset::register($this);
             ['label' => '频段', 'url' => ['/admin/range']],
             ['label' => '医院', 'url' => ['/admin/hospital']],
             Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
+                ['label' => '登录', 'url' => ['/site/login']]
             ) : (
                 '<li>'
                 . Html::beginForm(['/site/logout'], 'post')
                 . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->name . ')',
+                    '登出 (' . Yii::$app->user->identity->name . ')',
                     ['class' => 'btn btn-link logout']
                 )
                 . Html::endForm()
@@ -66,7 +66,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; 耳鸣治疗 <?= date('Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>

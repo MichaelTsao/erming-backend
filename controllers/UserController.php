@@ -29,7 +29,7 @@ class UserController extends \yii\rest\Controller
         return [$uid, User::setToken($uid)];
     }
 
-    public function acitonLogin($token)
+    public function actionLogin($token)
     {
         if ($user = User::findIdentityByAccessToken($token)){
             return $user->id;
@@ -50,11 +50,22 @@ class UserController extends \yii\rest\Controller
             return [1, Common::getFirstError($sms_code)];
         }
 
+        $weixin = new WeiXin([
+            'appId' => Yii::$app->params['weixin_appid'],
+            'appSecret' => Yii::$app->params['weixin_secret'],
+        ]);
+
+        $open_id = '';
+        if ($weixinInfo = $weixin->codeToSession(Yii::$app->request->post('weixin_code'))) {
+            $open_id = $weixinInfo['openid'];
+        }
+
         $user = new User();
         $user->phone = Yii::$app->request->post('phone');
-        $user->password = Yii::$app->request->post('password');
+        $user->password = md5(Yii::$app->request->post('password'));
         $user->name = Yii::$app->request->post('name');
-        $user->hospital_id = Yii::$app->request->post('hospital_id');
+        $user->hospital_id = Yii::$app->request->post('hospital');
+        $user->open_id = $open_id;
 
         if (!$user->save()) {
             return [2, "系统错误"];
