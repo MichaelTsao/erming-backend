@@ -12,6 +12,7 @@ use yii\web\UploadedFile;
  * @property integer $min
  * @property integer $max
  * @property string $file
+ * @property string $filePath
  * @property \yii\web\UploadedFile $fileModel
  */
 class Range extends \yii\db\ActiveRecord
@@ -78,13 +79,18 @@ class Range extends \yii\db\ActiveRecord
                             . '.' . $this->$key->extension;
                         $this->$url_key = $file;
                         $this->$key->saveAs(Yii::getAlias('@webroot') . $file);
-                    }else{
-                        Yii::warning('debug:'.json_encode($this->errors));
+                    } else {
+                        Yii::warning('debug:' . json_encode($this->errors));
                     }
                 }
             }
         }
 
         return parent::beforeSave($insert);
+    }
+
+    public function getFilePath()
+    {
+        return "" . $this->file;
     }
 }

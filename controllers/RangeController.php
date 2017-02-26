@@ -8,6 +8,6 @@ class RangeController extends \yii\rest\Controller
 {
     public function actionList()
     {
-        return Range::find()->select(['concat(min, "-", max)', 'id'])->indexBy('id')->column();
+        return Range::find()->all();
     }
 }
