@@ -36,7 +36,6 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => '首页', 'url' => ['/admin']],
             ['label' => '频段', 'url' => ['/admin/range']],
             ['label' => '医院', 'url' => ['/admin/hospital']],
             Yii::$app->user->isGuest ? (
