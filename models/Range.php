@@ -12,7 +12,6 @@ use yii\web\UploadedFile;
  * @property integer $min
  * @property integer $max
  * @property string $file
- * @property string $filePath
  * @property \yii\web\UploadedFile $fileModel
  */
 class Range extends \yii\db\ActiveRecord
@@ -89,8 +88,15 @@ class Range extends \yii\db\ActiveRecord
         return parent::beforeSave($insert);
     }
 
-    public function getFilePath()
+    public function fields()
     {
-        return "" . $this->file;
+        return [
+            'id',
+            'min',
+            'max',
+            'file' => function ($model) {
+                return 'http://' . $_SERVER['SERVER_NAME'] . $model->file;
+            },
+        ];
     }
 }
