@@ -78,4 +78,13 @@ class UserController extends \yii\rest\Controller
         return [0, $token];
     }
 
+    public function actionSetRange($range)
+    {
+
+    }
+
+    public function actionGetRange($token)
+    {
+
+    }
 }
