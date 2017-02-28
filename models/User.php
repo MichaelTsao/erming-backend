@@ -49,12 +49,17 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return [
             'id' => 'ID',
-            'phone' => 'Phone',
-            'name' => 'Name',
-            'password' => 'password',
-            'hospital_id' => 'Hospital ID',
-            'open_id' => 'Open ID',
+            'phone' => '手机',
+            'name' => '名字',
+            'password' => '密码',
+            'hospital_id' => '医院',
+            'open_id' => '微信Open ID',
         ];
+    }
+
+    public function getHospital()
+    {
+        return $this->hasOne(Hospital::className(), ['id' => 'hospital_id']);
     }
 
     /**

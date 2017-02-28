@@ -48,14 +48,14 @@ $config = [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-                [
-                    'class' => 'yii\rest\UrlRule',
-                    'controller' => 'user',
-                    'pluralize' => false,
-                    'only' => ['login', 'register'],
-                ],
-            ],
+//            'rules' => [
+//                [
+//                    'class' => 'yii\rest\UrlRule',
+//                    'controller' => 'user',
+//                    'pluralize' => false,
+//                    'only' => ['login', 'register'],
+//                ],
+//            ],
         ],
     ],
     'params' => $params,

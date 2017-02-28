@@ -9,8 +9,10 @@
 return [
     'Ranges' => '频段',
     'Hospitals' => '医院',
+    'Users' => '用户',
     'Create Range' => '新增频段',
     'Create Hospital' => '新增医院',
+    'Create User' => '新增用户',
     'Update {modelClass}: ' => '修改{modelClass}: ',
     'Update' => '修改',
     'Delete' => '删除',
