@@ -95,7 +95,7 @@ class Range extends \yii\db\ActiveRecord
             'min',
             'max',
             'file' => function ($model) {
-                return 'http://' . $_SERVER['SERVER_NAME'] . $model->file;
+                return 'https://' . $_SERVER['SERVER_NAME'] . $model->file;
             },
         ];
     }
