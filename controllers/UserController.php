@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\base\Common;
 use app\models\User;
+use app\models\UserRange;
 use Yii;
 use mycompany\common\WeiXin;
 use yii\web\ForbiddenHttpException;
@@ -26,13 +27,13 @@ class UserController extends \yii\rest\Controller
             throw new ForbiddenHttpException();
         }
 
-        return [$uid, User::setToken($uid)];
+        return [User::findIdentity($uid), User::setToken($uid)];
     }
 
     public function actionLogin($token)
     {
-        if ($user = User::findIdentityByAccessToken($token)){
-            return $user->id;
+        if ($user = User::findIdentityByAccessToken($token)) {
+            return $user;
         }
         return 0;
     }
@@ -75,16 +76,19 @@ class UserController extends \yii\rest\Controller
             return [2, "系统错误"];
         }
 
-        return [0, $token];
+        return [0, $token, $user];
     }
 
-    public function actionSetRange($range)
+    public function actionSetRange($rangeId, $token)
     {
+        if (!$user = User::findIdentityByAccessToken($token)) {
+            throw new ForbiddenHttpException();
+        }
 
-    }
-
-    public function actionGetRange($token)
-    {
-
+        $range  = new UserRange();
+        $range->user_id = $user->id;
+        $range->range_id = $rangeId;
+        $range->save();
+        return 0;
     }
 }
