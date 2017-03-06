@@ -38,6 +38,7 @@ AppAsset::register($this);
         'items' => [
             ['label' => '频段', 'url' => ['/admin/range']],
             ['label' => '医院', 'url' => ['/admin/hospital']],
+            ['label' => '用户', 'url' => ['/admin/user']],
             Yii::$app->user->isGuest ? (
                 ['label' => '登录', 'url' => ['/site/login']]
             ) : (
