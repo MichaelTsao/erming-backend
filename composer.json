@@ -30,7 +30,7 @@
     "yiisoft/yii2-bootstrap": "~2.0.0",
     "yiisoft/yii2-swiftmailer": "~2.0.0",
     "yiisoft/yii2-httpclient": "~2.0.0",
-    "yiisoft/yii2-redis": "^2.0",
+    "yiisoft/yii2-redis": "^2.0"
 //    "mycompany/common": "dev-master"
   },
   "require-dev": {
