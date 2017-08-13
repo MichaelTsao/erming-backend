@@ -13,11 +13,11 @@ info:
 
 tags:
 - name: user
-  description: 用户相关的操作
-- name: lesson
-  description: 课程相关的操作
-- name: userLesson
-  description: 用户课程相关的操作
+  description: 用户
+- name: hospital
+  description: 医院
+- name: range
+  description: 频段
 
 consumes:
   - application/json
@@ -25,10 +25,10 @@ produces:
   - application/json
 
 parameters:
-  lessonId:
-    name: lessonId
+  rangeId:
+    name: rangeId
     in: path
-    description: 课程ID
+    description: 频段ID
     type: string
     required: true
 
@@ -45,16 +45,14 @@ paths:
           in: query
           type: string
           description: 手机号
-          required: true
         - name: code
           in: query
           type: string
           description: 短信验证码
-          required: true
-        - name: apply
+        - name: openId
           in: query
           type: string
-          description: 课程申请ID
+          description: 微信OpenID
       responses:
         200:
           description: OK
@@ -65,59 +63,116 @@ paths:
                 type: string
                 description: 登录Token
                 example: 004fdde865843007d180c43ec240127e
-
-  /user-lesson/{lessonId}:
-    head:
-      tags: 
-      - userLesson
-      summary: 检查用户的课程状态
-      security:
-        - APIKeyQueryParam: []
-      parameters:
-        - $ref: '#/parameters/lessonId'
-      responses:
-        200:
-          description: 用户拥有课程
         403:
-          description: 用户不拥有课程
+          description: 登录失败
 
+  /user/protocol:
     get:
       tags:
-      - userLesson
-      summary: 获取用户的课程学习信息
-      operationId: getUserLesson
-      description: 
-        用户获得所拥有的某个课程的内容和状态
-      security:
-        - APIKeyQueryParam: []
-      parameters:
-        - $ref: '#/parameters/lessonId'
+      - user
+      summary: 获取用户协议
+      operationId: getUserProtocol
       responses:
         200:
-          description: 课程内容
+          description: 成功
+          schema:
+            type: string
+            example: 用户协议
+
+  /user:
+    post:
+      tags:
+      - user
+      summary: 注册用户
+      operationId: userRegister
+      description: 注册用户
+      parameters:
+        - name: phone
+          in: query
+          type: string
+          description: 手机号
+          required: true
+        - name: code
+          in: query
+          type: string
+          description: 短信验证码
+          required: true
+        - name: name
+          in: query
+          type: string
+          description: 姓名
+          required: true
+        - name: hospital
+          in: query
+          type: integer
+          description: 医院ID
+          required: true
+        - name: doctor
+          in: query
+          type: integer
+          description: 医生ID
+      responses:
+        200:
+          description: 注册成功
+        403:
+          description: 失败
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                description: 状态码
+                example: 1
+              message:
+                type: string
+                description: 错误描述
+                example: 手机号格式错误
+
+  /range:
+    get:
+      summary: 获取频段列表
+      tags:
+        - range
+      operationId: getRangeList
+      responses:
+        200:
+          description: 成功
           schema:
             type: array
             items:
-              $ref: '#/definitions/UserLesson'
-        403:
-          description: 用户不拥有课程 
-  
-  /lesson/{lessonId}:
+              $ref: '#/definitions/Range'
+
+  /range/{rangeId}/buy:
     get:
       tags:
-      - lesson
-      summary: 获取课程相关信息
-      operationId: getLessonInfo
-      description: 获取课程常规信息,不包括购买后才可看到的内容
+      - range
+      summary: 购买频段
+      operationId: rangeBuy
       parameters:
-        - $ref: '#/parameters/lessonId'
+        - $ref: '#/parameters/rangeId'
+        - name: type
+          type: integer
+          in: query
+          description: >
+            支付类型:
+            1 微信-小程序
       responses:
         200:
-          description: OK
+          description: 成功
+
+  /hospital:
+    get:
+      summary: 获取医院列表
+      tags:
+        - hospital
+      operationId: getHospitalList
+      responses:
+        200:
+          description: 成功
           schema:
             type: array
             items:
-              $ref: '#/definitions/Lesson'
+              $ref: '#/definitions/Hospital'
 
 definitions:
   User:
@@ -132,256 +187,37 @@ definitions:
         description: 名字
         example: 胡漾
 
-  Lesson:
-    description: 课程
+  Range:
+    description: 频段
     properties:
       id:
+        description: 频段ID
+        type: integer
+        example: 1
+      min:
+        type: integer
+        example: 100
+        description: 最小值
+      max:
+        type: integer
+        description: 最大值
+        example: 200
+      file:
         type: string
-        format: id
-        example: d1j5l5pomr8
+        description: 音频
+        example: /audio/a.mp3
+
+  Hospital:
+    description: 医院
+    properties:
+      id:
+        description: 医院ID
+        type: integer
+        example: 1
       name:
         type: string
-        description: 标题
-        example: 私教课程：帮你建立运营方法论
-      price:
-        type: number
-        description: 价格
-        format: float
-        example: 1999.00
-      period:
-        type: integer
-        description: 课程周期
-        example: 90
-      intro:
-        type: string
-        description: 简介
-        example: 建立运营方法论，运营技能到体系的提升。
-      lesson_details:
-        type: string
-        description: 详情
-        example: 通过运用并总结本课程中所讲解的运营体系。
-      say_to_apply:
-        type: string
-        description: 对报名学员说的话
-        example: 报名已成功提交。
-      say_to_pay:
-        type: string
-        description: 对付款学员说的话
-        example: 恭喜，你的报名已通过。
-      pay_successful:
-        type: string
-        description: 缴费成功提醒
-        example: 开始学习吧！\r\n请先听课。
-      purchase_notes:
-        type: string
-        description: 购买须知
-        example: 郝老师提供在线课程和一对一私教服务。
-      application_condition:
-        type: string
-        description: 购买条件
-        example: 私教服务采用筛选录取方式。
-      teacher:
-        $ref: '#/definitions/Teacher'
-      contents:
-        type: array
-        items:
-          $ref: '#/definitions/Content'
-      mentoring:
-        $ref: '#/definitions/Question'
-
-  Teacher:
-    description: 私教
-    properties:
-      id:
-        description: 私教ID
-        type: string
-        example: r42n3nwlr63
-      name:
-        type: string
-        description: 名字
-        example: 郝志中
-      icon:
-        type: string
-        description: 头像
-        example: http://coach.dakashuo.com/images/private_teacher_r42n3nwlr63_icon.jpg
-      cover:
-        type: string
-        description: 封面
-        example: http://coach.dakashuo.com/images/private_teacher_r42n3nwlr63_cover.jpg
-      video:
-        type: string
-        description: 视频
-        example: http://coach.dakashuo.com/images/private_teacher_r42n3nwlr63_video.mp4
-      phone:
-        type: string
-        example: 13911051050
-        description: 手机号
-      identity:
-        type: string
-        description: 身份
-        example: 运营私教
-      intro:
-        type: string
-        description: 简介
-        example: 大咖说创始人，《用户力》作者\r\n前迅雷看看CEO/酷6网联合创始人
-      introduction:
-        type: string
-        description: 详情
-        example: 2002年，加入搜狐，先后担任过搜狐网社区、视频和时尚中心等几个部门的运营总监
-      online:
-        type: integer
-        description: >
-          是否在线:
-           * 1：在线
-           * 0：不在线
-        example: 1
-
-  Content:
-    description: 课节
-    properties:
-      id:
-        description: 内容ID
-        type: string
-        example: v4wk00dlzjz
-      name:
-        type: string
-        example: 第1课：运营不是“打杂”，运营是个体系"
-        description: 标题
-      intro:
-        type: string
-        description: 简介
-        example: 在互联网领域你肯定会经常听到“产品经理”这个职位
-      description:
-        type: string
-        description: 描述
-        example: 还有，当有人问你，你做什么职业的啊
-      cover:
-        type: string
-        description: 封面
-        example: http://coach.dakashuo.com/audios/content_v4wk00dlzjz_cover.jpg
-      type:
-        type: integer
-        description: >
-          类型:
-           * 1：音频课
-           * 2：作业
-        example: 1
-
-  UserLesson:
-    description: 用户拥有的课程
-    allOf:
-      - $ref: '#/definitions/Lesson'
-      - properties:
-          contents:
-            type: array
-            items:
-              $ref: '#/definitions/UserContent'
-
-  UserContent:
-    description: 用户拥有的课节
-    allOf:
-      - $ref: '#/definitions/Content'
-      - properties:
-          audio:
-            type: string
-            description: 课程音频
-            example: http://coach.dakashuo.com/audios/content_v4wk00dlzjz_audio.mp3
-          audio_length:
-            type: integer
-            description: 音频长度
-            example: 49
-
-  Question:
-    description: 问答
-    properties:
-      id:
-        description: 问答ID
-        type: string
-        example: xgz732zx0rk
-      user:
-        $ref: '#/definitions/User'
-      teacher:
-        $ref: '#/definitions/Teacher'
-      question:
-        description: 问题
-        type: string
-        example: 在您的课程中提到强运营手段，想问下什么是强运营？是不是还有弱运营？
-      answer:
-        type: string
-        description: 回答
-        example: http://coach.dakashuo.com/audios/8090c47274104147b582ec51c2cc395c.mp3
-      audio_length:
-        type: integer
-        description: 音频长度
-        example: 48
-      status:
-        type: integer
-        description: >
-          是否回复:
-           * 1：未回复
-           * 2：已回复
-        example: 2
-      listen_status:
-        type: integer
-        description: >
-          是否听过:
-           * 1：未听过
-           * 2：已听过
-        example: 1
-      type:
-        type: integer
-        description: >
-          回复类型:
-           * 1：语音
-           * 2：文字
-        example: 1
-      response_time:
-        type: string
-        description: 回复时间
-        example: 1501560185
-      create_time:
-        type: string
-        description: 提问时间
-        example: 1501557130
-
-  Urge:
-    description: 督促
-    properties:
-      id:
-        description: 督促ID
-        type: string
-        example: 3340mr8o18n
-      user:
-        $ref: '#/definitions/User'
-      teacher:
-        $ref: '#/definitions/Teacher'
-      days:
-        type: integer
-        description: 超时天数
-        example: 11
-      urge:
-        type: string
-        description: 督促音频
-        example: http://coach.dakashuo.com/audios/zjc3kl2342asdf.mp3
-      audio_length:
-        type: integer
-        description: 音频长度
-        example: 48
-      response_time:
-        type: string
-        description: 督促时间
-        example: 1501560185
-      listen_status:
-        type: integer
-        description: >
-          是否听过:
-           * 1：未听过
-           * 2：已听过
-        example: 1
-      create_time:
-        type: string
-        description: 提问时间
-        example: 1501557130
+        example: 协和医院
+        description: 医院名字
 
 schemes:
  - https
