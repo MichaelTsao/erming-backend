@@ -45,6 +45,14 @@ $config = [
         ],
         'db' => require(__DIR__ . '/db.php'),
         'redis' => require(__DIR__ . '/redis.php'),
+        'weixin' => [
+            'class' => 'caoxiang\weixin\Weixin',
+            'appId' => $params['weixinId'],
+            'appSecret' => $params['weixinSecret'],
+            'mchId' => $params['weixinMchId'],
+            'mchSecret' => $params['weixinMchSecret'],
+            'mchKey' => $params['weixinMchKey'],
+        ],
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,

@@ -6,31 +6,25 @@ use app\models\base\Common;
 use app\models\User;
 use app\models\UserRange;
 use Yii;
-use mycompany\common\WeiXin;
 use yii\web\ForbiddenHttpException;
 use app\models\SmsCode;
 
 class UserController extends \yii\rest\Controller
 {
-    public function actionLoginWx($code)
+    public function actionLogin($code)
     {
-        $weixin = new WeiXin([
-            'appId' => Yii::$app->params['weixin_appid'],
-            'appSecret' => Yii::$app->params['weixin_secret'],
-        ]);
-
-        if (!$weixinInfo = $weixin->codeToSession($code)) {
+        if (!Yii::$app->weixin->getAppAuth($code)) {
             throw new ForbiddenHttpException();
         }
 
-        if (!$uid = User::loginByWeixin($weixinInfo['openid'])) {
+        if (!$uid = User::loginByWeixin(Yii::$app->weixin->openId)) {
             throw new ForbiddenHttpException();
         }
 
-        return [User::findIdentity($uid), User::setToken($uid)];
+        return ['token' => User::setToken($uid), 'info' => User::findOne($uid)];
     }
 
-    public function actionLogin($token)
+    public function actionAuth($token)
     {
         if ($user = User::findIdentityByAccessToken($token)) {
             return $user;
@@ -85,7 +79,7 @@ class UserController extends \yii\rest\Controller
             throw new ForbiddenHttpException();
         }
 
-        $range  = new UserRange();
+        $range = new UserRange();
         $range->user_id = $user->id;
         $range->range_id = $rangeId;
         $range->save();

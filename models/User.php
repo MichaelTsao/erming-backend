@@ -12,6 +12,7 @@ use Yii;
  * @property string $name
  * @property string $password
  * @property integer $hospital_id
+ * @property integer $range_id
  * @property string $open_id
  */
 class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
@@ -34,7 +35,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function rules()
     {
         return [
-            [['hospital_id'], 'integer'],
+            [['hospital_id', 'range_id'], 'integer'],
             [['phone'], 'string', 'max' => 20],
             [['name'], 'string', 'max' => 100],
             [['password'], 'string', 'max' => 50],
@@ -53,6 +54,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'name' => '名字',
             'password' => '密码',
             'hospital_id' => '医院',
+            'range_id' => '频段',
             'open_id' => '微信Open ID',
         ];
     }

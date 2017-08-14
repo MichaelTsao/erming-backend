@@ -6,7 +6,7 @@ use app\models\Range;
 
 class RangeController extends \yii\rest\Controller
 {
-    public function actionList()
+    public function actionIndex()
     {
         return Range::find()->all();
     }

@@ -49,10 +49,10 @@ paths:
           in: query
           type: string
           description: 短信验证码
-        - name: openId
+        - name: weixin_code
           in: query
           type: string
-          description: 微信OpenID
+          description: 微信Code，用于获取OpenID
       responses:
         200:
           description: OK
@@ -142,17 +142,19 @@ paths:
             items:
               $ref: '#/definitions/Range'
 
-  /range/{rangeId}/buy:
+  /user/buy:
     get:
       tags:
-      - range
+        - user
       summary: 购买频段
-      operationId: rangeBuy
+      operationId: userBuy
+      security:
+        - APIKeyQueryParam: []
       parameters:
-        - $ref: '#/parameters/rangeId'
         - name: type
           type: integer
           in: query
+          required: true
           description: >
             支付类型:
             1 微信-小程序
