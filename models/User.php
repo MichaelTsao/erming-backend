@@ -159,12 +159,8 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     {
         return [
             'id',
-            'range' => function ($model) {
-                if ($range = UserRange::findOne(['user_id' => $model->id])) {
-                    return $range->range_id;
-                }
-                return 0;
-            }
+            'name',
+            'range_id',
         ];
     }
 }

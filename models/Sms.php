@@ -38,13 +38,17 @@ class Sms
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('post')
-            ->setUrl("https://api.leancloud.cn/1.1/verifySmsCode/$code?mobilePhone=$phone")
+            ->setUrl("https://api.leancloud.cn/1.1/verifySmsCode/$code?mobilePhoneNumber=$phone")
             ->setFormat(Client::FORMAT_JSON)
             ->addHeaders([
                 'X-LC-Id' => Yii::$app->params['lean_cloud_id'],
                 'X-LC-Key' => Yii::$app->params['lean_cloud_key'],
             ])
             ->send();
-        return $response->isOk;
+        if ($response->isOk) {
+            return 0;
+        } else {
+            return $response->getData()['error'];
+        }
     }
 }

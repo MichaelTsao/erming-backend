@@ -32,7 +32,7 @@ class UserController extends \yii\rest\Controller
         return 0;
     }
 
-    public function actionRegister()
+    public function actionIndex()
     {
         $sms_code_config = [
             'phone' => Yii::$app->request->post('phone', ''),
@@ -41,36 +41,30 @@ class UserController extends \yii\rest\Controller
             'scenario' => SmsCode::SCENARIO_CHECK,
         ];
         $sms_code = new SmsCode($sms_code_config);
-        if (!$sms_code->check()) {
-            return [1, Common::getFirstError($sms_code)];
+        if ($error = $sms_code->check()) {
+            throw new ForbiddenHttpException($error);
         }
 
-        $weixin = new WeiXin([
-            'appId' => Yii::$app->params['weixin_appid'],
-            'appSecret' => Yii::$app->params['weixin_secret'],
-        ]);
-
         $open_id = '';
-        if ($weixinInfo = $weixin->codeToSession(Yii::$app->request->post('weixin_code'))) {
-            $open_id = $weixinInfo['openid'];
+        if (Yii::$app->weixin->getAppAuth(Yii::$app->request->post('weixin_code'))) {
+            $open_id = Yii::$app->weixin->openId;
         }
 
         $user = new User();
         $user->phone = Yii::$app->request->post('phone');
-        $user->password = md5(Yii::$app->request->post('password'));
         $user->name = Yii::$app->request->post('name');
-        $user->hospital_id = Yii::$app->request->post('hospital');
+        $user->hospital_id = Yii::$app->request->post('hospital', 0);
         $user->open_id = $open_id;
 
         if (!$user->save()) {
-            return [2, "系统错误"];
+            throw new ForbiddenHttpException("系统错误");
         }
 
         if (!$token = User::setToken($user->id)) {
-            return [2, "系统错误"];
+            throw new ForbiddenHttpException("系统错误");
         }
 
-        return [0, $token, $user];
+        return ['token' => $token, 'info' => $user];
     }
 
     public function actionSetRange($rangeId, $token)
@@ -84,5 +78,24 @@ class UserController extends \yii\rest\Controller
         $range->range_id = $rangeId;
         $range->save();
         return 0;
+    }
+
+    public function actionSendCode($phone)
+    {
+        if (isset(Yii::$app->user->id)) {
+            $uid = Yii::$app->user->id;
+        } else {
+            $uid = 0;
+        }
+        $sms_code_config = [
+            'uid' => $uid,
+            'phone' => $phone,
+            'type' => Yii::$app->request->get('type', SmsCode::TYPE_REGISTER),
+            'scenario' => SmsCode::SCENARIO_SEND,
+        ];
+        $sms_code = new SmsCode($sms_code_config);
+        if (!$sms_code->send()) {
+            throw new ForbiddenHttpException(Common::getFirstError($sms_code));
+        }
     }
 }
