@@ -31,7 +31,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'phone',
             'name',
-            'hospital.name',
+            [
+                'label' => '推荐医生名字',
+                'attribute' => 'doctor.name',
+            ],
             'open_id',
         ],
     ]) ?>

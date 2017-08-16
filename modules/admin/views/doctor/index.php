@@ -34,7 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                 'filter' => Hospital::names(),
             ],
-
+            [
+                'attribute' => 'qr',
+                'format' => 'raw',
+                'content' => function ($data, $row) {
+                    return Html::img($data->promoteQr, ['width' => 90, 'height' => 90]);
+                },
+            ],
             'ctime',
 
             ['class' => 'yii\grid\ActionColumn'],

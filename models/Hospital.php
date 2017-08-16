@@ -12,7 +12,7 @@ use Yii;
  */
 class Hospital extends \yii\db\ActiveRecord
 {
-    static $_names = null;
+    protected static $_names = null;
 
     /**
      * @inheritdoc

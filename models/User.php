@@ -11,9 +11,10 @@ use Yii;
  * @property string $phone
  * @property string $name
  * @property string $password
- * @property integer $hospital_id
+ * @property integer $doctor_id
  * @property integer $range_id
  * @property string $open_id
+ * @property Doctor $doctor
  */
 class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
 {
@@ -35,7 +36,7 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
     public function rules()
     {
         return [
-            [['hospital_id', 'range_id'], 'integer'],
+            [['doctor_id', 'range_id'], 'integer'],
             [['phone'], 'string', 'max' => 20],
             [['name'], 'string', 'max' => 100],
             [['password'], 'string', 'max' => 50],
@@ -54,15 +55,15 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'phone' => '手机',
             'name' => '名字',
             'password' => '密码',
-            'hospital_id' => '医院',
+            'doctor_id' => '医院',
             'range_id' => '频段',
             'open_id' => '微信Open ID',
         ];
     }
 
-    public function getHospital()
+    public function getDoctor()
     {
-        return $this->hasOne(Hospital::className(), ['id' => 'hospital_id']);
+        return $this->hasOne(Doctor::className(), ['id' => 'doctor_id']);
     }
 
     /**

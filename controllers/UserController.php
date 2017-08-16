@@ -53,7 +53,7 @@ class UserController extends \yii\rest\Controller
         $user = new User();
         $user->phone = Yii::$app->request->post('phone');
         $user->name = Yii::$app->request->post('name');
-        $user->hospital_id = Yii::$app->request->post('hospital', 0);
+        $user->doctor_id = Yii::$app->request->post('doctor', 0);
         $user->open_id = $open_id;
 
         if (!$user->save()) {
