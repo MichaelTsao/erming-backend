@@ -3,12 +3,13 @@
 namespace app\controllers;
 
 use app\models\base\Common;
+use app\models\Member;
+use app\models\SmsCode;
 use app\models\User;
 use app\models\UserRange;
 use Yii;
 use yii\filters\auth\QueryParamAuth;
 use yii\web\ForbiddenHttpException;
-use app\models\SmsCode;
 
 class UserController extends \yii\rest\Controller
 {
@@ -110,7 +111,9 @@ class UserController extends \yii\rest\Controller
 
     public function actionMember()
     {
-        return false;
+        if (!Member::check(Yii::$app->user->id)) {
+            throw new ForbiddenHttpException('用户无权限使用服务');
+        }
     }
 
     public function actionBuy()

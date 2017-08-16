@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "member".
  *
@@ -72,5 +70,17 @@ class Member extends \yii\db\ActiveRecord
         $member->pay_id = $payId;
         $member->end_time = date('Y-m-d H:i:s', $endTime);
         return $member->save();
+    }
+
+    public static function check($userId)
+    {
+        if ($members = static::findAll(['user_id' => $userId])) {
+            foreach ($members as $member) {
+                if (strtotime($member->end_time) >= time()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

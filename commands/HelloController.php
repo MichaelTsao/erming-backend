@@ -7,6 +7,7 @@
 
 namespace app\commands;
 
+use app\models\User;
 use yii\console\Controller;
 
 /**
@@ -26,5 +27,10 @@ class HelloController extends Controller
     public function actionIndex($message = 'hello world')
     {
         echo $message . "\n";
+    }
+
+    public function actionSetToken($uid)
+    {
+        echo User::setToken($uid) . "\n";
     }
 }
