@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\base\Common;
 use app\models\Member;
+use app\models\Pay;
 use app\models\SmsCode;
 use app\models\User;
 use app\models\UserRange;
@@ -118,6 +119,49 @@ class UserController extends \yii\rest\Controller
 
     public function actionBuy()
     {
-        return false;
+        $pay = new Pay();
+        $pay->user_id = Yii::$app->user->id;
+        $pay->price = 0.01;
+        $pay->save();
+
+        if (!$param = Yii::$app->weixin->payRequest('耳鸣治疗', Yii::$app->user->identity->open_id,
+            $pay->pay_id, intval($pay->price * 100),
+            'http://' . Yii::$app->request->hostName . "/user/pay/" . $pay->pay_id)
+        ) {
+            throw new ForbiddenHttpException("微信下单失败");
+        }
+
+        return [
+            'order_sn' => $pay->pay_id,
+            'money' => $pay->price,
+            'name' => '耳鸣治疗购买费用',
+            'param' => $param,
+        ];
+    }
+
+    public function actionPay($id)
+    {
+        if (!$pay = Pay::findOne($id)) {
+            throw new ForbiddenHttpException("订单不存在");
+        }
+
+        $result = Yii::$app->weixin->payConfirm();
+
+        if (!$result->result) {
+            $pay->status = Pay::STATUS_PAY_FAIL;
+        } else {
+            if ($id != $result->orderId) {
+                throw new ForbiddenHttpException("数据错误");
+            }
+
+            $pay->transaction_number = $result->vendorOrderId;
+            $pay->status = Pay::STATUS_PAYED;
+
+            Member::create($pay->user_id, $pay->pay_id);
+        }
+        $pay->vendor_str = $result->vendorString;
+        $pay->pay_time = date('Y-m-d H:i:s');
+        $pay->save();
+        return $result->output;
     }
 }
