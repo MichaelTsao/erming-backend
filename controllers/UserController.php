@@ -57,7 +57,7 @@ class UserController extends \yii\rest\Controller
         $user->open_id = $open_id;
 
         if (!$user->save()) {
-            throw new ForbiddenHttpException("系统错误");
+            throw new ForbiddenHttpException(Common::getFirstError($user));
         }
 
         if (!$token = User::setToken($user->id)) {
