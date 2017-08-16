@@ -36,6 +36,22 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
+            ['label' => '频段', 'url' => ['/admin/range']],
+            ['label' => '医生', 'url' => ['/admin/doctor']],
+            ['label' => '医院', 'url' => ['/admin/hospital']],
+            ['label' => '用户', 'url' => ['/admin/user']],
+            Yii::$app->user->isGuest ? (
+                ['label' => '登录', 'url' => ['/site/login']]
+            ) : (
+                '<li>'
+                . Html::beginForm(['/site/logout'], 'post')
+                . Html::submitButton(
+                    '登出 (' . Yii::$app->user->identity->name . ')',
+                    ['class' => 'btn btn-link logout']
+                )
+                . Html::endForm()
+                . '</li>'
+            )
         ],
     ]);
     NavBar::end();

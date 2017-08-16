@@ -5,21 +5,21 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "hospital".
+ * This is the model class for table "doctor".
  *
  * @property integer $id
  * @property string $name
+ * @property integer $hospital_id
+ * @property string $ctime
  */
-class Hospital extends \yii\db\ActiveRecord
+class Doctor extends \yii\db\ActiveRecord
 {
-    static $_names = null;
-
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'hospital';
+        return 'doctor';
     }
 
     /**
@@ -28,7 +28,10 @@ class Hospital extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'string', 'max' => 1000],
+            [['hospital_id'], 'integer'],
+            [['ctime'], 'safe'],
+            [['name'], 'string', 'max' => 50],
+            [['name'], 'required'],
         ];
     }
 
@@ -40,14 +43,8 @@ class Hospital extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => '名字',
+            'hospital_id' => '医院',
+            'ctime' => '创建时间',
         ];
-    }
-
-    public static function names()
-    {
-        if (static::$_names === null) {
-            static::$_names = static::find()->select(['name', 'id'])->indexBy('id')->asArray()->column();
-        }
-        return static::$_names;
     }
 }

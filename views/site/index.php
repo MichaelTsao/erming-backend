@@ -2,14 +2,14 @@
 
 /* @var $this yii\web\View */
 
-$this->title = 'My Yii Application';
+$this->title = '耳鸣治疗系统';
 ?>
 <div class="site-index">
 
     <div class="jumbotron">
         <h1>欢迎使用耳鸣治疗系统!</h1>
 
-        <p class="lead">请点击相应菜单项</p>
+        <p class="lead">请使用小程序访问功能</p>
 
     </div>
 

@@ -14,6 +14,8 @@ info:
 tags:
 - name: user
   description: 用户
+- name: doctor
+  description: 医生
 - name: hospital
   description: 医院
 - name: range
@@ -175,6 +177,16 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Hospital'
+
+  /doctor/promote/{doctorId}:
+    get:
+      summary: 医生推广入口
+      tags:
+        - doctor
+      operationId: doctorPromote
+      responses:
+        200:
+          description: 成功
 
 definitions:
   User:
