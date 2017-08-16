@@ -114,7 +114,6 @@ class UserController extends \yii\rest\Controller
         if (!Member::check(Yii::$app->user->id)) {
             throw new ForbiddenHttpException('用户无权限使用服务');
         }
-        return 'ok';
     }
 
     public function actionBuy()
