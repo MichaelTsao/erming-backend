@@ -46,7 +46,7 @@ class Hospital extends \yii\db\ActiveRecord
     public static function names()
     {
         if (static::$_names === null) {
-            static::$_names = static::find()->select(['name', 'id'])->indexBy('id')->asArray()->column();
+            static::$_names = static::find()->select(['name', 'id'])->indexBy('id')->column();
         }
         return static::$_names;
     }

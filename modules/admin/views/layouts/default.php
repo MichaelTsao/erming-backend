@@ -37,9 +37,10 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => '频段', 'url' => ['/admin/range']],
+            ['label' => '用户', 'url' => ['/admin/user']],
             ['label' => '医生', 'url' => ['/admin/doctor']],
             ['label' => '医院', 'url' => ['/admin/hospital']],
-            ['label' => '用户', 'url' => ['/admin/user']],
+            ['label' => '配置', 'url' => ['/admin/setting']],
             Yii::$app->user->isGuest ? (
                 ['label' => '登录', 'url' => ['/site/login']]
             ) : (

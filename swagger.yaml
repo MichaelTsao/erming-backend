@@ -20,6 +20,8 @@ tags:
   description: 医院
 - name: range
   description: 频段
+- name: setting
+  description: 配置
 
 consumes:
   - application/json
@@ -178,6 +180,20 @@ paths:
             items:
               $ref: '#/definitions/Hospital'
 
+  /setting:
+    get:
+      summary: 获取配置
+      tags:
+        - setting
+      operationId: getSettings
+      responses:
+        200:
+          description: 成功
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Setting'
+
   /doctor/promote/{doctorId}:
     get:
       summary: 医生推广入口
@@ -232,6 +248,18 @@ definitions:
         type: string
         example: 协和医院
         description: 医院名字
+
+  Setting:
+    description: 配置
+    properties:
+      id:
+        description: 配置ID
+        type: string
+        example: trial_length
+      value:
+        type: string
+        example: {"length":"111","type":"2"}
+        description: 配置信息
 
 schemes:
  - https
