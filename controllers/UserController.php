@@ -6,11 +6,22 @@ use app\models\base\Common;
 use app\models\User;
 use app\models\UserRange;
 use Yii;
+use yii\filters\auth\QueryParamAuth;
 use yii\web\ForbiddenHttpException;
 use app\models\SmsCode;
 
 class UserController extends \yii\rest\Controller
 {
+    public function behaviors()
+    {
+        return [
+            'authenticator' => [
+                'class' => QueryParamAuth::className(),
+                'only' => ['member', 'set-range', 'buy'],
+            ],
+        ];
+    }
+
     public function actionLogin($code)
     {
         if (!Yii::$app->weixin->getAppAuth($code)) {
@@ -69,14 +80,10 @@ class UserController extends \yii\rest\Controller
         return ['token' => $token, 'info' => $user];
     }
 
-    public function actionSetRange($rangeId, $token)
+    public function actionSetRange($rangeId)
     {
-        if (!$user = User::findIdentityByAccessToken($token)) {
-            throw new ForbiddenHttpException();
-        }
-
         $range = new UserRange();
-        $range->user_id = $user->id;
+        $range->user_id = Yii::$app->user->id;
         $range->range_id = $rangeId;
         $range->save();
         return 0;
@@ -99,5 +106,15 @@ class UserController extends \yii\rest\Controller
         if (!$sms_code->send()) {
             throw new ForbiddenHttpException(Common::getFirstError($sms_code));
         }
+    }
+
+    public function actionMember()
+    {
+        return false;
+    }
+
+    public function actionBuy()
+    {
+        return false;
     }
 }

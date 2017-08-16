@@ -8,7 +8,7 @@ use yii\helpers\Html;
 $this->title = '修改医生: ' . $model->name;
 $this->params['breadcrumbs'][] = ['label' => '医生', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = '更新';
 ?>
 <div class="doctor-update">
 

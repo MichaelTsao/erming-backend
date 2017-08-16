@@ -165,4 +165,11 @@ class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface
             'range_id',
         ];
     }
+
+    public function afterSave($insert, $attr)
+    {
+        if ($insert) {
+            Member::create($this->id, Member::TRIAL);
+        }
+    }
 }

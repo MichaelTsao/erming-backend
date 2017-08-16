@@ -70,6 +70,23 @@ paths:
         403:
           description: 登录失败
 
+  /user/member:
+    get:
+      tags:
+      - user
+      summary: 用户权限检查
+      operationId: userMember
+      description: 检查用户是否依然拥有会员权限，可以使用功能
+      security:
+        - APIKeyQueryParam: []
+      responses:
+        200:
+          description: 有权限
+        403:
+          description: 无权限
+        401:
+          description: 未登录
+
   /user/protocol:
     get:
       tags:
