@@ -20,6 +20,9 @@ $config = [
                 'application/json' => 'yii\web\JsonParser',
             ]
         ],
+        'response' => [
+            'format' => 'json'
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],

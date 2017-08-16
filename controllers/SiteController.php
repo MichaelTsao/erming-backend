@@ -2,14 +2,13 @@
 
 namespace app\controllers;
 
+use app\models\ContactForm;
+use app\models\LoginForm;
 use Yii;
 use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
-use app\models\SmsCode;
-use app\models\base\Common;
+use yii\web\Controller;
+use yii\web\Response;
 
 class SiteController extends Controller
 {
@@ -62,6 +61,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        Yii::$app->response->format = Response::FORMAT_HTML;
         return $this->render('index');
     }
 
