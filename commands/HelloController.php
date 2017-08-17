@@ -7,6 +7,7 @@
 
 namespace app\commands;
 
+use app\models\Member;
 use app\models\User;
 use yii\console\Controller;
 
@@ -24,9 +25,9 @@ class HelloController extends Controller
      * This command echoes what you have entered as the message.
      * @param string $message the message to be echoed.
      */
-    public function actionIndex($message = 'hello world')
+    public function actionIndex()
     {
-        echo $message . "\n";
+        Member::create(38, Member::TRIAL);
     }
 
     public function actionSetToken($uid)

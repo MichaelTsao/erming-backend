@@ -61,14 +61,15 @@ class Member extends \yii\db\ActiveRecord
                     $amount = intval($setting->trial_length);
                 }
             }
-            $endTime = time() + $amount * $interval;
         } else {
-            $endTime = time() + 30 * 86400;
+            $interval = 86400;
+            $amount = 30;
         }
+
         $member = new static();
         $member->user_id = $userId;
-        $member->pay_id = $payId;
-        $member->end_time = date('Y-m-d H:i:s', $endTime);
+        $member->pay_id = $payId == static::TRIAL ? 0 : $payId;
+        $member->end_time = date('Y-m-d H:i:s', time() + $amount * $interval);
         return $member->save();
     }
 
