@@ -41,13 +41,13 @@ AppAsset::register($this);
             ['label' => '医生', 'url' => ['/admin/doctor']],
             ['label' => '医院', 'url' => ['/admin/hospital']],
             ['label' => '配置', 'url' => ['/admin/setting']],
-            Yii::$app->user->isGuest ? (
-                ['label' => '登录', 'url' => ['/site/login']]
+            Yii::$app->account->isGuest ? (
+                ['label' => '登录', 'url' => ['/admin/default/login']]
             ) : (
                 '<li>'
-                . Html::beginForm(['/site/logout'], 'post')
+                . Html::beginForm(['/admin/default/logout'], 'post')
                 . Html::submitButton(
-                    '登出 (' . Yii::$app->user->identity->name . ')',
+                    '登出 (' . Yii::$app->account->identity->username . ')',
                     ['class' => 'btn btn-link logout']
                 )
                 . Html::endForm()

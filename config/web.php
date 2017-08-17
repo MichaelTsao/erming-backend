@@ -30,6 +30,16 @@ $config = [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
         ],
+        'account' => [
+            'identityClass' => 'app\models\Account',
+            'class' => 'yii\web\User',
+            'enableAutoLogin' => true,
+            'enableSession' => true,
+            'loginUrl' => '/admin/default/login',
+            'idParam' => '__account_id',
+            'identityCookie' => ['name' => '_account_identity', 'httpOnly' => true],
+            'authTimeoutParam' => '__account_expire',
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
